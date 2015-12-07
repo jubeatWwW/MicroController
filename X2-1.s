@@ -11,7 +11,7 @@ expr_result	DCD		0
 	AREA	|.text|, CODE, READONLY
 	EXPORT	__main
 		
-postfix_expr	DCB	"-100 10 20 + - 10 +", 0
+postfix_expr	DCB	"-100  +10 +20 + - 10 +", 0
 /*
 -100 10 20 + - 10 +
 */
@@ -51,22 +51,46 @@ notNum
 	beq		subOp
 	cmp		r2, #0x20
 	beq		spaceOp
+	cmp		r2, #0x00
+	beq		LastOp
+	b		error
+LastOp
 	movs	r5, #1
 	b		spaceOp
+error
+	movs	r3, #0
+	subs	r3, r3, #1
+	b		iferror
+	
 addOp
+	cmp		r3, #0
+	bne		error
 	movs 	r6, #1
 	b		loop
 subOp
+	cmp		r3, #0
+	bne		error
 	movs	r6, #2
 	b loop
 spaceOp
 	cmp		r6, #0
 	beq		strNum
 	cmp 	r6, #1
-	beq		addCal
+	beq		addJudge
 	cmp		r6, #2
 	beq		subJudge
 strNum
+	cmp		r3, #0
+	beq		loop
+	push{	r3}
+	movs	r3, #0
+	movs	r6, #0
+	b		loop
+addJudge
+	cmp 	r3, #0
+	bne		isPos
+	b		addCal
+isPos
 	push{	r3}
 	movs	r3, #0
 	movs	r6, #0
@@ -102,7 +126,7 @@ subCal
 	
 EndExpr
 	pop{	r3}
-	
+iferror
 	ldr		r0, =expr_result
 	str		r3, [r0]
 	

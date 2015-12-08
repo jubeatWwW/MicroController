@@ -11,8 +11,8 @@ max_size	DCD		0
 	AREA	|.text|, CODE, READONLY
 	EXPORT	__main
 	
-m			DCD		0x60
-n			DCD		0x5E
+m			DCD		0x40
+n			DCD		0x20
 		
 	ALIGN	4
 __main	FUNCTION

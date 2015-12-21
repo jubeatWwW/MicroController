@@ -35,7 +35,7 @@ __main	FUNCTION
 	
 	movs	r7, #0	
 	BL		Led1Display	
-	movs	r7, #0
+	movs	r7, #1
 	movs	r6, #0
 loop 
 
@@ -45,7 +45,20 @@ loop
 	ands	r1, r1, r3
 	cmp 	r1, #0
 	beq		AddPushed
+	
+	movs 	r2,#INPUT_reg
+	ldr 	r1, [r0, r2]
+	ldr	 	r3, =PIN6
+	ands	r1, r1, r3
+	cmp 	r1, #0
+	beq		Reset
 	b		PushEventComplete
+
+Reset
+	bl		longdelay
+	movs	r7, #0
+	movs	r6, #0
+	b		loop
 
 AddPushed
 
@@ -79,8 +92,9 @@ PushEventComplete
 
 fib	FUNCTION
 	push{	lr}
-	adds	r6, r6, #1
+	movs	r5, r7
 	adds	r7, r7, r6
+	movs	r6, r5
 	pop{	pc}
 	ENDFUNC
 
